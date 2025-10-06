@@ -28,7 +28,7 @@ async function fetchProducts() {
     if (steelGrade) query.append('steelGrade', steelGrade);
 
     try {
-        const response = await fetch(`https://djltc-92-248-141-134.a.free.pinggy.link/api/products?${query.toString()}`);
+        const response = await fetch(`https://ceydq-92-248-141-134.a.free.pinggy.link/api/products?${query.toString()}`);
         if (!response.ok) throw new Error('Ошибка загрузки данных');
         const products = await response.json();
         displayProducts(products);
@@ -47,7 +47,6 @@ function displayProducts(products) {
     }
 
     let html = '<table>';
-    // Убрали шапку таблицы полностью, так как она не нужна
     products.forEach(product => {
         html += `<tr>
             <td data-label="Название">${product.name}</td>
@@ -59,10 +58,10 @@ function displayProducts(products) {
             <td data-label="Склад">${product.stockCity}</td>
             <td data-label="Цена (т)">${product.priceT}</td>
             <td data-label="В наличии (т)">${product.inStockT}</td>
-            <td data-label="">  <!-- Убрали текст "Добавить" из data-label -->
-                <input type="number" id="quantityTons-${product.id}" step="0.01" min="0" placeholder="Тонны">
-                <input type="number" id="quantityMeters-${product.id}" step="0.01" min="0" placeholder="Метры">
-                <button onclick="addToCart('${product.id}', '${product.stockCity}')">Добавить</button>
+            <td data-label="">
+                <input type="number" id="quantityTons-${product.id}" step="${product.avgTubeWeight}" min="0" placeholder="Тонны (шаг ${product.avgTubeWeight})">
+                <input type="number" id="quantityMeters-${product.id}" step="${product.avgTubeLength}" min="0" placeholder="Метры (шаг ${product.avgTubeLength})">
+                <button onclick="addToCart('${product.id}', '${product.stockID}', '${product.name.replace(/'/g, "\\'")}', '${product.stockCity.replace(/'/g, "\\'")}')">Добавить</button>
             </td>
         </tr>`;
     });
@@ -70,35 +69,60 @@ function displayProducts(products) {
     productsDiv.innerHTML = html;
 }
 
-async function addToCart(nomenclatureID, stockID) {
-    const quantityTons = parseFloat(document.getElementById(`quantityTons-${nomenclatureID}`).value) || 0;
-    const quantityMeters = parseFloat(document.getElementById(`quantityMeters-${nomenclatureID}`).value) || 0;
+async function addToCart(nomenclatureID, stockID, name, stockCity) {
+    const quantityTonsInput = document.getElementById(`quantityTons-${nomenclatureID}`);
+    const quantityMetersInput = document.getElementById(`quantityMeters-${nomenclatureID}`);
+    const quantityTons = parseFloat(quantityTonsInput.value) || 0;
+    const quantityMeters = parseFloat(quantityMetersInput.value) || 0;
 
     if (quantityTons === 0 && quantityMeters === 0) {
         document.getElementById('error').textContent = 'Укажите количество в тоннах или метрах.';
         return;
     }
 
+    if (quantityTons < 0 || quantityMeters < 0) {
+        document.getElementById('error').textContent = 'Количество не может быть отрицательным.';
+        return;
+    }
+
     const cartItem = {
-        nomenclatureID,
-        stockID,
-        quantityTons,
-        quantityMeters
+        NomenclatureID: nomenclatureID,
+        StockID: stockID,
+        QuantityTons: quantityTons,
+        QuantityMeters: quantityMeters,
+        Price: 0
     };
 
     try {
-        const response = await fetch('https://djltc-92-248-141-134.a.free.pinggy.link/api/cart', {
+        const response = await fetch('https://ceydq-92-248-141-134.a.free.pinggy.link/api/cart', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(cartItem)
         });
-        if (!response.ok) throw new Error('Ошибка добавления в корзину');
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Ошибка добавления в корзину: ${errorText}`);
+        }
         const result = await response.json();
-        cart.push(result);
+        console.log('Ответ сервера /api/cart:', result); // Логирование ответа сервера
+        // Убедимся, что свойства соответствуют модели CartItem
+        const normalizedItem = {
+            NomenclatureID: result.NomenclatureID || result.nomenclatureID || nomenclatureID,
+            StockID: result.StockID || result.stockID || stockID,
+            QuantityTons: result.QuantityTons || result.quantityTons || quantityTons,
+            QuantityMeters: result.QuantityMeters || result.quantityMeters || quantityMeters,
+            Price: result.Price || result.price || 0,
+            Name: name, // Добавляем Name
+            StockCity: stockCity // Добавляем StockCity
+        };
+        cart.push(normalizedItem);
         displayCart();
         document.getElementById('orderButton').style.display = 'block';
         document.getElementById('error').textContent = '';
+        quantityTonsInput.value = '';
+        quantityMetersInput.value = '';
     } catch (error) {
+        console.error('Ошибка в addToCart:', error);
         document.getElementById('error').textContent = error.message;
     }
 }
@@ -111,14 +135,20 @@ function displayCart() {
     }
 
     let html = '<table>';
-    html += '<tr><th>Товар</th><th>Склад</th><th>Количество (т)</th><th>Количество (м)</th><th>Цена</th><th>Удалить</th></tr>';
     cart.forEach((item, index) => {
+        // Проверяем, что свойства определены, или используем значение по умолчанию
+        const name = item.Name || 'Неизвестный товар';
+        const stockCity = item.StockCity || 'Неизвестный склад';
+        const quantityTons = item.QuantityTons || 0;
+        const quantityMeters = item.QuantityMeters || 0;
+        const price = item.Price || 0;
+
         html += `<tr>
-            <td data-label="Товар">${item.nomenclatureID}</td>
-            <td data-label="Склад">${item.stockID}</td>
-            <td data-label="Количество (т)">${item.quantityTons}</td>
-            <td data-label="Количество (м)">${item.quantityMeters}</td>
-            <td data-label="Цена">${item.price}</td>
+            <td data-label="Товар">${name}</td>
+            <td data-label="Склад">${stockCity}</td>
+            <td data-label="Количество (т)">${quantityTons}</td>
+            <td data-label="Количество (м)">${quantityMeters}</td>
+            <td data-label="Цена">${price}</td>
             <td data-label="Удалить"><button onclick="removeFromCart(${index})">Удалить</button></td>
         </tr>`;
     });
@@ -151,11 +181,17 @@ async function submitOrder() {
         inn,
         phone,
         email,
-        items: cart
+        items: cart.map(item => ({
+            NomenclatureID: item.NomenclatureID,
+            StockID: item.StockID,
+            QuantityTons: item.QuantityTons,
+            QuantityMeters: item.QuantityMeters,
+            Price: item.Price
+        })) // Убираем Name и StockCity из отправляемых данных, так как сервер ожидает только поля CartItem
     };
 
     try {
-        const response = await fetch('https://djltc-92-248-141-134.a.free.pinggy.link/api/orders', {
+        const response = await fetch('https://ceydq-92-248-141-134.a.free.pinggy.link/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(order)

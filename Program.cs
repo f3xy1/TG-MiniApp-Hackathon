@@ -312,8 +312,11 @@ public class Program
                             PipeWallThickness = n.PipeWallThickness,
                             TypeName = t.TypeName,
                             StockCity = s.StockCity,
+                            StockID = s.IDStock, // Added StockID
                             PriceT = p.PriceT,
-                            InStockT = r.InStockT
+                            InStockT = r.InStockT,
+                            AvgTubeLength = r.AvgTubeLength,
+                            AvgTubeWeight = r.AvgTubeWeight
                         };
 
             if (!string.IsNullOrEmpty(stock)) query = query.Where(x => x.StockCity == stock);
@@ -330,8 +333,11 @@ public class Program
 
         app.MapPost("/api/cart", async (AppDbContext db, [FromBody] CartItem cartItem) =>
         {
+            Console.WriteLine($"Получен запрос на добавление в корзину: {JsonSerializer.Serialize(cartItem)}");
+
             if (string.IsNullOrEmpty(cartItem.NomenclatureID) || string.IsNullOrEmpty(cartItem.StockID))
             {
+                Console.WriteLine("Ошибка: NomenclatureID или StockID отсутствуют");
                 return Results.BadRequest("NomenclatureID and StockID are required.");
             }
 
@@ -340,16 +346,26 @@ public class Program
 
             if (remnant == null)
             {
+                Console.WriteLine($"Ошибка: Остатки не найдены для ID={cartItem.NomenclatureID}, StockID={cartItem.StockID}");
                 return Results.NotFound("Product not found in stock.");
             }
 
             if (cartItem.QuantityTons > remnant.InStockT || cartItem.QuantityMeters > remnant.InStockM)
             {
+                Console.WriteLine($"Ошибка: Запрошенное количество превышает доступное (Tons: {cartItem.QuantityTons}/{remnant.InStockT}, Meters: {cartItem.QuantityMeters}/{remnant.InStockM})");
                 return Results.BadRequest("Requested quantity exceeds available stock.");
             }
 
-            if (cartItem.QuantityMeters % remnant.AvgTubeLength != 0 || cartItem.QuantityTons % remnant.AvgTubeWeight != 0)
+            if (remnant.AvgTubeLength == 0 || remnant.AvgTubeWeight == 0)
             {
+                Console.WriteLine("Ошибка: AvgTubeLength или AvgTubeWeight равны 0");
+                return Results.BadRequest("Invalid AvgTubeLength or AvgTubeWeight in stock.");
+            }
+
+            if (Math.Abs(cartItem.QuantityMeters % remnant.AvgTubeLength) > 0.0001 || 
+                Math.Abs(cartItem.QuantityTons % remnant.AvgTubeWeight) > 0.0001)
+            {
+                Console.WriteLine($"Ошибка: Количество не кратно AvgTubeLength ({remnant.AvgTubeLength}) или AvgTubeWeight ({remnant.AvgTubeWeight})");
                 return Results.BadRequest("Quantity must be a multiple of AvgTubeLength or AvgTubeWeight.");
             }
 
@@ -358,6 +374,7 @@ public class Program
 
             if (price == null)
             {
+                Console.WriteLine($"Ошибка: Цена не найдена для ID={cartItem.NomenclatureID}, StockID={cartItem.StockID}");
                 return Results.NotFound("Price information not found.");
             }
 
@@ -375,6 +392,7 @@ public class Program
                 cartItem.Price = finalPrice * cartItem.QuantityMeters;
             }
 
+            Console.WriteLine($"Добавление в корзину: ID={cartItem.NomenclatureID}, Price={cartItem.Price}");
             db.CartItems.Add(cartItem);
             await db.SaveChangesAsync();
             return Results.Created($"/api/cart/{cartItem.Id}", cartItem);
@@ -409,7 +427,13 @@ public class Program
                     return Results.BadRequest($"Requested quantity for {item.NomenclatureID} exceeds available stock.");
                 }
 
-                if (item.QuantityMeters % remnant.AvgTubeLength != 0 || item.QuantityTons % remnant.AvgTubeWeight != 0)
+                if (remnant.AvgTubeLength == 0 || remnant.AvgTubeWeight == 0)
+                {
+                    return Results.BadRequest($"Invalid AvgTubeLength or AvgTubeWeight for {item.NomenclatureID}.");
+                }
+
+                if (Math.Abs(item.QuantityMeters % remnant.AvgTubeLength) > 0.0001 || 
+                    Math.Abs(item.QuantityTons % remnant.AvgTubeWeight) > 0.0001)
                 {
                     return Results.BadRequest($"Quantity for {item.NomenclatureID} must be a multiple of AvgTubeLength or AvgTubeWeight.");
                 }
