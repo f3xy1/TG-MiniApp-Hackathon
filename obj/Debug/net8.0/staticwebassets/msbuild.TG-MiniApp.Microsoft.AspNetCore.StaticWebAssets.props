@@ -12,8 +12,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>oz248l1bwq</Fingerprint>
-      <Integrity>3Mts2J1nPmvW9ufQ+SzntF8+IfRukgkS0RUaWeiRUl0=</Integrity>
+      <Fingerprint>gi4iz2f8ly</Fingerprint>
+      <Integrity>qN0ryGObAgKdiuu0Yik/DTszg0Hozvve974fIl2IWAQ=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\icons\back.svg'))</OriginalItemSpec>
@@ -54,6 +54,42 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\icons\filter.svg'))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\icons\placeholder_big.svg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TG-MiniApp</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TG-MiniApp</BasePath>
+      <RelativePath>icons/placeholder_big.svg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>ripw16x1cm</Fingerprint>
+      <Integrity>MxJ0Ygm76YtnGYkOz60H6nohq9Q8jtfDpMYHR4rYdjI=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\icons\placeholder_big.svg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\icons\placeholder_small.svg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TG-MiniApp</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TG-MiniApp</BasePath>
+      <RelativePath>icons/placeholder_small.svg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>50nm8yedtq</Fingerprint>
+      <Integrity>C/JHtIunrq3Dhdexu8db0C0ZE2aLksPLXAuHEr3wvjM=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\icons\placeholder_small.svg'))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\icons\search.svg'))">
       <SourceType>Package</SourceType>
       <SourceId>TG-MiniApp</SourceId>
@@ -84,8 +120,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>nx3ia9dbo8</Fingerprint>
-      <Integrity>a4K1IxL5IWdwSkv16pbKPDz6jXYz7gk9PLXaFqxjh7s=</Integrity>
+      <Fingerprint>yy03qc1l76</Fingerprint>
+      <Integrity>Vn5qgePFzB+pGq6/9XHgO5dzBge0OJortVzKwIYJJyI=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\index.html'))</OriginalItemSpec>
@@ -102,8 +138,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>y7aprfgcow</Fingerprint>
-      <Integrity>AmnmY75+bBLuO91wwk91gflOjA4Txdle2i/mH45xtBc=</Integrity>
+      <Fingerprint>cgur9uo3v6</Fingerprint>
+      <Integrity>FAzbS6VS9Jr41VC6VWcMluErdBpWH6j7rCJEdQ5qKbk=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\index-scripts.js'))</OriginalItemSpec>
@@ -120,8 +156,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>l6z1ffhlb5</Fingerprint>
-      <Integrity>ozxUiPQVlAnS6PUP4qtAi29e8BngwF2AHT2mEhxbGjA=</Integrity>
+      <Fingerprint>lpr93jaqkd</Fingerprint>
+      <Integrity>d9wgBE81uPLcwE3nLwohEyibZJKZRHOkWLIZg7VocTw=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\script.js'))</OriginalItemSpec>
@@ -138,8 +174,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>1oegv05y9u</Fingerprint>
-      <Integrity>vwLZh6zTkqPdAIbce9mthJHgG7WSq1RL+FAW1aeHJtY=</Integrity>
+      <Fingerprint>uv27cw1p2l</Fingerprint>
+      <Integrity>WmbmgWzkMTtAn+nIa8Ssi8FW+ytTyoS/gTGwwormEIc=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\style.css'))</OriginalItemSpec>

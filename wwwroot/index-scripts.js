@@ -71,7 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="back-button"><img src="icons/back.svg" alt="Back"></button>
                 <h2>Корзина</h2>
             </div>
+            <div class="cart-item-count"></div>
             <div class="cart-content"></div>
+            <div class="cart-total"></div>
             <button id="cartOrderButton" style="display: none;">Оформить заказ</button>
         </div>
     `;
@@ -278,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const addToCartButton = modal.querySelector('#addToCartButton');
         if (addToCartButton) {
-            addToCartButton.onclick = () => addToCart(id, stockID, name, stockCity, priceT, avgTubeWeight, avgTubeLength);
+            addToCartButton.onclick = () => addToCart(id, stockID, name, stockCity, priceT, avgTubeWeight, avgTubeLength, gost, steelGrade, diameter, pipeWallThickness, typeName, inStockT);
         }
         modal.querySelectorAll('input[name="unitType"]').forEach(radio => {
             radio.onchange = () => {
@@ -306,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    window.addToCart = async function(nomenclatureID, stockID, name, stockCity, priceT, avgTubeWeight, avgTubeLength) {
+    window.addToCart = async function(nomenclatureID, stockID, name, stockCity, priceT, avgTubeWeight, avgTubeLength, gost, steelGrade, diameter, pipeWallThickness, typeName, inStockT) {
         if (!Array.isArray(cart)) {
             console.error('Ошибка: cart не является массивом, текущий тип:', typeof cart, cart);
             cart = [];
@@ -349,7 +351,18 @@ document.addEventListener('DOMContentLoaded', () => {
             StockID: stockID,
             QuantityTons: unitType === 'tons' ? quantity : 0,
             QuantityMeters: unitType === 'meters' ? quantity : 0,
-            Price: 0
+            Price: parseFloat(priceT) || 0,
+            Name: name,
+            StockCity: stockCity,
+            AvgTubeWeight: parseFloat(avgTubeWeight) || 1,
+            AvgTubeLength: parseFloat(avgTubeLength) || 1,
+            UnitType: unitType,
+            Gost: gost || '',
+            SteelGrade: steelGrade || '',
+            Diameter: diameter || '',
+            PipeWallThickness: pipeWallThickness || '',
+            TypeName: typeName || '',
+            InStockT: inStockT || ''
         };
 
         try {
@@ -371,9 +384,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 StockID: result.StockID || result.stockID || stockID,
                 QuantityTons: result.QuantityTons || result.quantityTons || 0,
                 QuantityMeters: result.QuantityMeters || result.quantityMeters || 0,
-                Price: result.Price || result.price || 0,
+                Price: result.Price || result.price || parseFloat(priceT) || 0,
                 Name: name,
-                StockCity: stockCity
+                StockCity: stockCity,
+                AvgTubeWeight: parseFloat(avgTubeWeight) || 1,
+                AvgTubeLength: parseFloat(avgTubeLength) || 1,
+                UnitType: unitType,
+                Gost: gost || '',
+                SteelGrade: steelGrade || '',
+                Diameter: diameter || '',
+                PipeWallThickness: pipeWallThickness || '',
+                TypeName: typeName || '',
+                InStockT: inStockT || ''
             };
             cart.push(normalizedItem);
             console.log('Товар добавлен в cart:', normalizedItem);
@@ -393,6 +415,63 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    window.updateCartItemQuantity = function(index, change) {
+        if (!Array.isArray(cart)) {
+            console.error('Ошибка: cart не является массивом при обновлении количества');
+            cart = [];
+            return;
+        }
+        const item = cart[index];
+        if (!item) {
+            console.error('Ошибка: элемент корзины не найден по индексу', index);
+            return;
+        }
+        const unitType = item.UnitType;
+        const step = unitType === 'tons' ? item.AvgTubeWeight : item.AvgTubeLength;
+        let newQuantity = unitType === 'tons' ? item.QuantityTons : item.QuantityMeters;
+        newQuantity = Math.max(0, newQuantity + change * step);
+        newQuantity = Math.round(newQuantity / step) * step; // Ensure quantity is a multiple of step
+        newQuantity = parseFloat(newQuantity.toFixed(4)); // Avoid floating-point precision issues
+
+        if (unitType === 'tons') {
+            item.QuantityTons = newQuantity;
+            item.QuantityMeters = 0;
+        } else {
+            item.QuantityMeters = newQuantity;
+            item.QuantityTons = 0;
+        }
+
+        // Update cart on server
+        const cartItem = {
+            NomenclatureID: item.NomenclatureID,
+            StockID: item.StockID,
+            QuantityTons: item.QuantityTons,
+            QuantityMeters: item.QuantityMeters,
+            Price: item.Price
+        };
+
+        fetch('https://tg-miniapp-hack.loca.lt/api/cart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(cartItem)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка обновления корзины');
+            }
+            return response.json();
+        })
+        .then(result => {
+            console.log('Корзина обновлена на сервере:', result);
+            displayCart();
+            document.getElementById('error').textContent = '';
+        })
+        .catch(error => {
+            console.error('Ошибка обновления корзины:', error);
+            document.getElementById('error').textContent = error.message;
+        });
+    };
+
     window.displayCart = function() {
         const cartModal = document.querySelector('.cart-modal');
         if (!cartModal) {
@@ -400,13 +479,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         const cartContent = cartModal.querySelector('.cart-content');
-        if (!cartContent) {
-            console.error('Ошибка: элемент .cart-content не найден в DOM');
+        const cartItemCount = cartModal.querySelector('.cart-item-count');
+        const cartTotal = cartModal.querySelector('.cart-total');
+        if (!cartContent || !cartItemCount || !cartTotal) {
+            console.error('Ошибка: элемент .cart-content, .cart-item-count или .cart-total не найден в DOM');
             return;
         }
 
         if (!Array.isArray(cart) || cart.length === 0) {
             cartContent.innerHTML = '<p>Корзина пуста.</p>';
+            cartItemCount.textContent = 'Товаров: 0';
+            cartTotal.innerHTML = '';
             const cartOrderButton = cartModal.querySelector('#cartOrderButton');
             if (cartOrderButton) {
                 cartOrderButton.style.display = 'none';
@@ -422,40 +505,51 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         console.log('Отображение корзины, содержимое cart:', cart);
+        cartItemCount.textContent = `Товаров: ${cart.length}`;
         let html = '<div class="cart-items">';
         let totalPrice = 0;
         cart.forEach((item, index) => {
             const name = item.Name || 'Неизвестный товар';
             const stockCity = item.StockCity || 'Неизвестный склад';
-            const quantityTons = (item.QuantityTons || 0).toFixed(3);
-            const quantityMeters = (item.QuantityMeters || 0).toFixed(2);
-            const price = (item.Price || 0).toFixed(2);
-
-            totalPrice += parseFloat(price);
-            console.log(`Элемент корзины ${index}:`, { name, stockCity, quantityTons, quantityMeters, price });
-            // Truncate name to 20 characters with ellipsis and add tooltip
+            const quantity = item.UnitType === 'tons' ? item.QuantityTons : item.QuantityMeters;
+            const unitLabel = item.UnitType === 'tons' ? 'т' : 'м';
+            const pricePerUnit = item.Price || 0;
+            const itemTotalPrice = (quantity * pricePerUnit).toFixed(2);
+            totalPrice += parseFloat(itemTotalPrice);
             const truncatedName = name.length > 20 ? name.substring(0, 20) + '...' : name;
+
             html += `
                 <div class="cart-item">
+                    <div class="cart-item-image">
+                        <img src="icons/placeholder_small.svg" alt="Product Image">
+                    </div>
                     <div class="cart-item-info">
                         <div class="cart-item-name" title="${name}">${truncatedName}</div>
-                        <div class="cart-item-stock">Склад: ${stockCity}</div>
+                        <div class="cart-item-specs">
+                            <div class="spec-row"><span class="spec-label">Склад:</span><span class="spec-value">${item.StockCity || ''}</span></div>
+                            <div class="spec-row"><span class="spec-label">Вид продукции:</span><span class="spec-value">${item.TypeName || ''}</span></div>
+                            <div class="spec-row"><span class="spec-label">Диаметр:</span><span class="spec-value">${item.Diameter || ''} мм</span></div>
+                            <div class="spec-row"><span class="spec-label">Толщина стенки:</span><span class="spec-value">${item.PipeWallThickness || ''} мм</span></div>
+                            <div class="spec-row"><span class="spec-label">ГОСТ:</span><span class="spec-value">${item.Gost || ''}</span></div>
+                            <div class="spec-row"><span class="spec-label">Марка стали:</span><span class="spec-value">${item.SteelGrade || ''}</span></div>
+                            <div class="spec-row"><span class="spec-label">В наличии:</span><span class="spec-value">${item.InStockT || ''} т</span></div>
+                            <div class="spec-row"><span class="spec-label">Количество:</span><span class="spec-value quantity">
+                                <button onclick="updateCartItemQuantity(${index}, -1)">-</button>
+                                <input type="number" value="${quantity.toFixed(3)}" min="0" step="${item.UnitType === 'tons' ? item.AvgTubeWeight : item.AvgTubeLength}" onchange="updateCartItemQuantity(${index}, this.value - ${quantity})">
+                                <button onclick="updateCartItemQuantity(${index}, 1)">+</button>
+                                ${unitLabel}
+                            </span></div>
+                            <div class="spec-row"><span class="spec-label">Цена за ${unitLabel}:</span><span class="spec-value">${pricePerUnit.toFixed(2)} ₽</span></div>
+                            <div class="spec-row"><span class="spec-label cart-item-total">Итого:</span><span class="spec-value">${itemTotalPrice} Р</span></div>
+                        </div>
                     </div>
-                    <div class="cart-item-details">
-                        <div class="cart-item-quantity">Тонны: ${quantityTons}</div>
-                        <div class="cart-item-quantity">Метры: ${quantityMeters}</div>
-                        <div class="cart-item-price">Цена: ${price} ₽</div>
-                    </div>
-                    <button class="remove-button" onclick="removeFromCart(${index})">Удалить</button>
+                    <button class="remove-button" onclick="removeFromCart(${index})"><img src="icons/recycle_bin.svg" alt="Remove"></button>
                 </div>
             `;
         });
-        html += `
-            <div class="cart-total">
-                <strong>Итого: ${totalPrice.toFixed(2)} ₽</strong>
-            </div>
-        </div>`;
+        html += '</div>';
         cartContent.innerHTML = html;
+        cartTotal.innerHTML = `<strong>Итого: ${totalPrice.toFixed(2)} Р</strong>`;
 
         const cartOrderButton = cartModal.querySelector('#cartOrderButton');
         if (cartOrderButton) {

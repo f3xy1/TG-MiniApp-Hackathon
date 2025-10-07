@@ -13,6 +13,14 @@
       "PackagePath": "staticwebassets\\icons\\filter.svg"
     },
     {
+      "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\icons\\placeholder_big.svg",
+      "PackagePath": "staticwebassets\\icons\\placeholder_big.svg"
+    },
+    {
+      "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\icons\\placeholder_small.svg",
+      "PackagePath": "staticwebassets\\icons\\placeholder_small.svg"
+    },
+    {
       "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\icons\\search.svg",
       "PackagePath": "staticwebassets\\icons\\search.svg"
     },
