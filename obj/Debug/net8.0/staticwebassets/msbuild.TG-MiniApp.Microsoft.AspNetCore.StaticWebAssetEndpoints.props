@@ -1,0 +1,16 @@
+﻿<Project>
+  <ItemGroup>
+    <StaticWebAssetEndpoint Include="_content/TG-MiniApp/index.5fqidrp2n5.html">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\index.html'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"5fqidrp2n5"},{"Name":"integrity","Value":"sha256-vyC2DpxcxYezsyI/LGs1amtSg\u002BUGkcrL4jPCW9/3t\u002BQ="},{"Name":"label","Value":"_content/TG-MiniApp/index.html"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"13143"},{"Name":"Content-Type","Value":"text/html"},{"Name":"ETag","Value":"\u0022vyC2DpxcxYezsyI/LGs1amtSg\u002BUGkcrL4jPCW9/3t\u002BQ=\u0022"},{"Name":"Last-Modified","Value":"Mon, 06 Oct 2025 19:01:04 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/TG-MiniApp/index.html">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\index.html'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-vyC2DpxcxYezsyI/LGs1amtSg\u002BUGkcrL4jPCW9/3t\u002BQ="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"13143"},{"Name":"Content-Type","Value":"text/html"},{"Name":"ETag","Value":"\u0022vyC2DpxcxYezsyI/LGs1amtSg\u002BUGkcrL4jPCW9/3t\u002BQ=\u0022"},{"Name":"Last-Modified","Value":"Mon, 06 Oct 2025 19:01:04 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+  </ItemGroup>
+</Project>

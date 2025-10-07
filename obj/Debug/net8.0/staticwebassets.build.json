@@ -1,0 +1,125 @@
+{
+  "Version": 1,
+  "Hash": "qImz0pVJEiR8Nt7L7+U4yBlLtRP6hazYMOY5uaxob40=",
+  "Source": "TG-MiniApp",
+  "BasePath": "_content/TG-MiniApp",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "TG-MiniApp\\wwwroot",
+      "Source": "TG-MiniApp",
+      "ContentRoot": "D:\\URFU\\TG-MiniApp\\wwwroot\\",
+      "BasePath": "_content/TG-MiniApp",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "D:\\URFU\\TG-MiniApp\\wwwroot\\index.html",
+      "SourceId": "TG-MiniApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\URFU\\TG-MiniApp\\wwwroot\\",
+      "BasePath": "_content/TG-MiniApp",
+      "RelativePath": "index#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "5fqidrp2n5",
+      "Integrity": "vyC2DpxcxYezsyI/LGs1amtSg+UGkcrL4jPCW9/3t+Q=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\index.html"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "index.5fqidrp2n5.html",
+      "AssetFile": "D:\\URFU\\TG-MiniApp\\wwwroot\\index.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "13143"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"vyC2DpxcxYezsyI/LGs1amtSg+UGkcrL4jPCW9/3t+Q=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 06 Oct 2025 19:01:04 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "5fqidrp2n5"
+        },
+        {
+          "Name": "label",
+          "Value": "index.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-vyC2DpxcxYezsyI/LGs1amtSg+UGkcrL4jPCW9/3t+Q="
+        }
+      ]
+    },
+    {
+      "Route": "index.html",
+      "AssetFile": "D:\\URFU\\TG-MiniApp\\wwwroot\\index.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "13143"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"vyC2DpxcxYezsyI/LGs1amtSg+UGkcrL4jPCW9/3t+Q=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 06 Oct 2025 19:01:04 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-vyC2DpxcxYezsyI/LGs1amtSg+UGkcrL4jPCW9/3t+Q="
+        }
+      ]
+    }
+  ]
+}
