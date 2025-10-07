@@ -86,7 +86,7 @@ select, input, button {
 }
 
 button {
-    background-color: #0088cc;
+    background-color: #979899;
     color: white;
     border: none;
     cursor: pointer;
@@ -138,6 +138,155 @@ th {
     border-radius: 2px;
     border-bottom: #aeb1b3 2px solid;
     border-top: #aeb1b3 2px solid;
+    margin-bottom: 12px;
+}
+
+.products-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.product-item {
+    display: flex;
+    align-items: flex-start;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.product-item:hover {
+    transform: translateY(-2px);
+}
+
+.product-image img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.product-details {
+    flex-grow: 1;
+}
+
+.product-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.product-specs {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.product-specs span {
+    display: block;
+    margin-bottom: 3px;
+}
+
+.product-price {
+    font-size: 1rem;
+    color: #000000;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.back-button img,
+.cart-icon {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+}
+
+.back-button {
+    background-color: #fff;
+    width: 32px;
+}
+
+.back-button:hover,
+.cart-icon:hover {
+    opacity: 0.7;
+}
+
+.modal-image img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    margin-bottom: 15px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.modal-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.modal-price {
+    font-size: 1.2rem;
+    color: #000000;
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.modal-specs {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.spec-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.spec-label {
+    text-align: left;
+}
+
+.spec-value {
+    text-align: right;
+    color: #555;
 }
 
 
