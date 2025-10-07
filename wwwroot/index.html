@@ -3,76 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Выбор продукции</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Каталог</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+    <script src="index-scripts.js" defer></script>
 </head>
 <body>
     <div class="container">
-        <h1>Выбор продукции</h1>
+        <h1>Каталог</h1>
 
+        <!-- Поиск -->
+        <div class="search-bar">
+            <div class="search-container">
+                <img src="icons/search.svg" alt="Search" class="search-icon">
+                <input type="text" id="search" placeholder="Поиск по продукции..." class="search-input">
+            </div>
+            <div class="action-buttons">
+                <button class="icon-button bin-button">
+                    <img src="icons/bin.svg" alt="Clear Cart">
+                </button>
+                <button class="icon-button filter-button">
+                    <img src="icons/filter.svg" alt="Filter">
+                </button>
+            </div>
+        </div>
+
+        <!-- Фильтры -->
         <div class="filter-section">
-            <label for="stock">Склад:</label>
-            <select id="stock">
-                <option value="">Все</option>
-                <option value="Екатеринбург">Екатеринбург</option>
-                <option value="Москва">Москва</option>
-                <option value="Челябинск">Челябинск</option>
-                <option value="Санкт-Петербург">Санкт-Петербург</option>
-            </select>
-
-            <label for="type">Тип:</label>
-            <select id="type">
-                <option value="">Все</option>
-                <option value="Бесшовные холоднодеформированные">Бесшовные холоднодеформированные</option>
-                <option value="Прямошовные">Прямошовные</option>
-                <option value="Холоднокатаные">Холоднокатаные</option>
-                <option value="Горячекатаные">Горячекатаные</option>
-            </select>
-
-            <label for="diameter">Диаметр (мм):</label>
-            <input type="number" id="diameter" placeholder="Диаметр (мм)">
-
-            <label for="wallThickness">Толщина стенки (мм):</label>
-            <input type="number" id="wallThickness" placeholder="Толщина стенки (мм)">
-
-            <label for="gost">ГОСТ:</label>
-            <input type="text" id="gost" placeholder="ГОСТ">
-
-            <label for="steelGrade">Марка стали:</label>
-            <input type="text" id="steelGrade" placeholder="Марка стали">
-
-            <button onclick="fetchProducts()">Показать</button>
+            <div>
+                <label>Склад:</label>
+                <select id="stock">
+                    <option value="">Все</option>
+                    <option value="Екатеринбург">Екатеринбург</option>
+                    <option value="Москва">Москва</option>
+                    <option value="Челябинск">Челябинск</option>
+                    <option value="Санкт-Петербург">Санкт-Петербург</option>
+                </select>
+            </div>
+            <div>
+                <label>Тип:</label>
+                <select id="type">
+                    <option value="">Все</option>
+                    <option value="Бесшовные холоднодеформированные">Бесшовные холоднодеформированные</option>
+                    <option value="Прямошовные">Прямошовные</option>
+                    <option value="Холоднокатаные">Холоднокатаные</option>
+                    <option value="Горячекатаные">Горячекатаные</option>
+                </select>
+            </div>
+            <div>
+                <label>Диаметр (мм):</label>
+                <input type="number" id="diameter" step="0.01" placeholder="Введите диаметр">
+            </div>
+            <div>
+                <label>Толщина стенки (мм):</label>
+                <input type="number" id="wallThickness" step="0.01" placeholder="Введите толщину стенки">
+            </div>
+            <div>
+                <label>ГОСТ:</label>
+                <input type="text" id="gost" placeholder="Введите ГОСТ">
+            </div>
+            <div>
+                <label>Марка стали:</label>
+                <input type="text" id="steelGrade" placeholder="Введите марку стали">
+            </div>
         </div>
 
         <div id="products"></div>
         <div id="error" class="error"></div>
 
-        <h2>Корзина</h2>
-        <div id="cart"></div>
-        <button id="orderButton" style="display: none;" onclick="showOrderForm()">Оформить заказ</button>
+        <!-- Корзина -->
+        <div class="cart-section">
+            <h2>Корзина</h2>
+            <div id="cart"></div>
+            <button id="orderButton" style="display: none;" onclick="showOrderForm()">Оформить заказ</button>
+        </div>
 
         <div id="orderForm" style="display: none;">
             <h2>Оформление заказа</h2>
-            <label for="firstName">Имя:</label>
-            <input type="text" id="firstName" required>
-
-            <label for="lastName">Фамилия:</label>
-            <input type="text" id="lastName" required>
-
-            <label for="inn">ИНН:</label>
-            <input type="text" id="inn" required>
-
-            <label for="phone">Телефон:</label>
-            <input type="tel" id="phone" required>
-
-            <label for="email">Email:</label>
-            <input type="email" id="email" required>
-
+            <div>
+                <label>Имя:</label>
+                <input type="text" id="firstName" placeholder="Введите имя">
+            </div>
+            <div>
+                <label>Фамилия:</label>
+                <input type="text" id="lastName" placeholder="Введите фамилию">
+            </div>
+            <div>
+                <label>ИНН:</label>
+                <input type="text" id="inn" placeholder="Введите ИНН">
+            </div>
+            <div>
+                <label>Телефон:</label>
+                <input type="text" id="phone" placeholder="Введите телефон">
+            </div>
+            <div>
+                <label>Email:</label>
+                <input type="email" id="email" placeholder="Введите email">
+            </div>
             <button onclick="submitOrder()">Подтвердить заказ</button>
         </div>
     </div>
-
-    <script src="script.js"></script>
 </body>
 </html>

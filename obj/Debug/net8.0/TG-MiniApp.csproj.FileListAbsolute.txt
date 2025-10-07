@@ -128,3 +128,4 @@ D:\URFU\TG-MiniApp\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.re
 D:\URFU\TG-MiniApp\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
 D:\URFU\TG-MiniApp\bin\Debug\net8.0\appsettings.json
 D:\URFU\TG-MiniApp\bin\Debug\net8.0\TG-MiniApp.staticwebassets.runtime.json
+D:\URFU\TG-MiniApp\obj\Debug\net8.0\TG-MiniApp.sourcelink.json

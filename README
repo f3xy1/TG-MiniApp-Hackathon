@@ -5,8 +5,8 @@
 
 ## Требования
 - Docker и Docker Compose.
-- Node.js (для локальной разработки frontend, опционально).
 - Telegram-бот для тестирования Mini App.
+- Localtunnel для туннелирования
 
 ## Установка
 1. **Backend**:

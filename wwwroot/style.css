@@ -16,10 +16,63 @@ h1, h2 {
     margin-bottom: 15px;
 }
 
+.header {
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    display: flex;
+    height: 22px;
+    align-items: center;
+}
+
+.search-container {
+    position: relative;
+    flex: 1;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.search-input {
+    background-color: #aeb1b3;
+    padding-left: 32px;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-left: 10px;
+}
+
+.icon-button {
+    background-color: #f0f2f5;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+.icon-button img {
+    width: 24px;
+    height: 24px;
+}
+
 .filter-section {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
 select, input, button {
@@ -39,16 +92,17 @@ button {
     cursor: pointer;
     padding: 15px;
     font-size: 1.1rem;
-}
-
-button:hover {
-    background-color: #006b9f;
+    transition: background 0.3s;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 th, td {
@@ -56,16 +110,16 @@ th, td {
     padding: 10px;
     text-align: left;
     font-size: 0.9rem;
-    white-space: normal; /* Позволяем перенос текста */
-    word-wrap: break-word; /* Перенос длинных слов */
-    overflow-wrap: break-word; /* Дополнительно для совместимости */
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 th {
     background-color: #f2f2f2;
 }
 
-.cart-item {
+.cart-section {
     margin-top: 20px;
 }
 
@@ -75,7 +129,18 @@ th {
     font-size: 0.9rem;
 }
 
-/* Mobile-specific styles */
+.results-info {
+    margin-top: 22px;
+    font-size: 1.4rem;
+    color: #aeb1b3;
+    background-color: #f0f2f5;
+    padding: 5px 10px;
+    border-radius: 2px;
+    border-bottom: #aeb1b3 2px solid;
+    border-top: #aeb1b3 2px solid;
+}
+
+
 @media (max-width: 600px) {
     body {
         padding: 10px;
@@ -83,6 +148,26 @@ th {
 
     h1, h2 {
         font-size: 1.2rem;
+    }
+
+    .search-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+
+    .action-buttons {
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 10px;
+        margin-left: 0;
+    }
+
+    .filter-section {
+        padding: 10px;
     }
 
     select, input, button {
@@ -98,18 +183,17 @@ th {
     th, td {
         font-size: 0.8rem;
         padding: 8px;
-        white-space: normal; /* Повторяем для мобильных */
+        white-space: normal;
         word-wrap: break-word;
         overflow-wrap: break-word;
     }
 
-    /* Stack table rows for better readability */
     table, thead, tbody, th, td, tr {
         display: block;
     }
 
     thead {
-        display: none; /* Hide table headers on mobile */
+        display: none;
     }
 
     tr {
@@ -124,7 +208,7 @@ th {
         position: relative;
         border: none;
         border-bottom: 1px solid #eee;
-        white-space: normal; /* Обеспечиваем перенос */
+        white-space: normal;
         word-wrap: break-word;
     }
 

@@ -295,8 +295,8 @@ public class Program
 
         // API Endpoints
         app.MapGet("/api/products", async (AppDbContext db, [FromQuery] string? stock, [FromQuery] string? type,
-            [FromQuery] double? diameter, [FromQuery] double? wallThickness, [FromQuery] string? gost, [FromQuery] string? steelGrade) =>
-        {
+            [FromQuery] double? diameter, [FromQuery] double? wallThickness, [FromQuery] string? gost, [FromQuery] string? steelGrade, [FromQuery] string? search) =>
+{
             var query = from n in db.Nomenclatures
                         join t in db.Types on n.IDType equals t.IDType
                         join p in db.Prices on n.ID equals p.ID
@@ -312,7 +312,7 @@ public class Program
                             PipeWallThickness = n.PipeWallThickness,
                             TypeName = t.TypeName,
                             StockCity = s.StockCity,
-                            StockID = s.IDStock, // Added StockID
+                            StockID = s.IDStock,
                             PriceT = p.PriceT,
                             InStockT = r.InStockT,
                             AvgTubeLength = r.AvgTubeLength,
@@ -325,6 +325,18 @@ public class Program
             if (wallThickness.HasValue) query = query.Where(x => x.PipeWallThickness == wallThickness.Value);
             if (!string.IsNullOrEmpty(gost)) query = query.Where(x => x.Gost == gost);
             if (!string.IsNullOrEmpty(steelGrade)) query = query.Where(x => x.SteelGrade == steelGrade);
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(x =>
+                    (x.Name != null && x.Name.ToLower().Contains(search.ToLower())) ||
+                    (x.Gost != null && x.Gost.ToLower().Contains(search.ToLower())) ||
+                    (x.SteelGrade != null && x.SteelGrade.ToLower().Contains(search.ToLower())) ||
+                    (x.TypeName != null && x.TypeName.ToLower().Contains(search.ToLower())) ||
+                    (x.StockCity != null && x.StockCity.ToLower().Contains(search.ToLower())) ||
+                    x.Diameter.ToString().Contains(search) ||
+                    x.PipeWallThickness.ToString().Contains(search)
+                );
+            }
 
             var results = await query.ToListAsync();
             Console.WriteLine($"API /api/products возвращает {results.Count} записей");

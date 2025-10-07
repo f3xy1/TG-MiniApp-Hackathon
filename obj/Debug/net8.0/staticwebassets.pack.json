@@ -1,8 +1,36 @@
 {
   "Files": [
     {
+      "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\icons\\back.svg",
+      "PackagePath": "staticwebassets\\icons\\back.svg"
+    },
+    {
+      "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\icons\\bin.svg",
+      "PackagePath": "staticwebassets\\icons\\bin.svg"
+    },
+    {
+      "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\icons\\filter.svg",
+      "PackagePath": "staticwebassets\\icons\\filter.svg"
+    },
+    {
+      "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\icons\\search.svg",
+      "PackagePath": "staticwebassets\\icons\\search.svg"
+    },
+    {
+      "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\index-scripts.js",
+      "PackagePath": "staticwebassets\\index-scripts.js"
+    },
+    {
       "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\index.html",
       "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\script.js",
+      "PackagePath": "staticwebassets\\script.js"
+    },
+    {
+      "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\style.css",
+      "PackagePath": "staticwebassets\\style.css"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.TG-MiniApp.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
