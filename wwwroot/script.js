@@ -28,7 +28,7 @@ async function fetchProducts() {
     if (steelGrade) query.append('steelGrade', steelGrade);
 
     try {
-        const response = await fetch(`https://tg-miniapp-hack.loca.lt/api/products?${query.toString()}`);
+        const response = await fetch(`https://unlucky-cobra-77.loca.lt/api/products?${query.toString()}`);
         if (!response.ok) throw new Error('Ошибка загрузки данных');
         const products = await response.json();
         displayProducts(products);
@@ -94,7 +94,7 @@ async function addToCart(nomenclatureID, stockID, name, stockCity) {
     };
 
     try {
-        const response = await fetch('https://tg-miniapp-hack.loca.lt/api/cart', {
+        const response = await fetch('https://unlucky-cobra-77.loca.lt/api/cart', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(cartItem)
@@ -191,7 +191,7 @@ async function submitOrder() {
     };
 
     try {
-        const response = await fetch('https://tg-miniapp-hack.loca.lt/api/orders', {
+        const response = await fetch('https://unlucky-cobra-77.loca.lt/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(order)

@@ -296,7 +296,7 @@ public class Program
         // API Endpoints
         app.MapGet("/api/products", async (AppDbContext db, [FromQuery] string? stock, [FromQuery] string? type,
             [FromQuery] double? diameter, [FromQuery] double? wallThickness, [FromQuery] string? gost, [FromQuery] string? steelGrade, [FromQuery] string? search) =>
-{
+        {
             var query = from n in db.Nomenclatures
                         join t in db.Types on n.IDType equals t.IDType
                         join p in db.Prices on n.ID equals p.ID
@@ -404,9 +404,10 @@ public class Program
                 cartItem.Price = finalPrice * cartItem.QuantityMeters;
             }
 
-            Console.WriteLine($"Добавление в корзину: ID={cartItem.NomenclatureID}, Price={cartItem.Price}");
+            Console.WriteLine($"Добавление в корзину: ID={cartItem.NomenclatureID}, StockID={cartItem.StockID}, QuantityTons={cartItem.QuantityTons}, QuantityMeters={cartItem.QuantityMeters}, Price={cartItem.Price}");
             db.CartItems.Add(cartItem);
             await db.SaveChangesAsync();
+            Console.WriteLine($"Товар успешно добавлен в корзину: ID={cartItem.Id}");
             return Results.Created($"/api/cart/{cartItem.Id}", cartItem);
         });
 
