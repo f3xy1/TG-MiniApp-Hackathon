@@ -416,12 +416,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
             console.log('Полный ответ сервера:', JSON.stringify(result, null, 2));
 
+            // ОБНОВЛЯЕМ: Сохраняем все данные с сервера включая НДС
             const normalizedItem = {
                 NomenclatureID: result.NomenclatureID || result.nomenclatureID || nomenclatureID,
                 StockID: result.StockID || result.stockID || stockID,
                 QuantityTons: result.QuantityTons || result.quantityTons || 0,
                 QuantityMeters: result.QuantityMeters || result.quantityMeters || 0,
-                Price: result.Price || result.price || parseFloat(priceT) || 0,
+                Price: result.UnitPrice || result.unitPrice || 0, // Цена за единицу БЕЗ НДС
+                PriceWithNDS: result.PriceWithNDS || result.unitPrice || 0, // Цена за единицу С НДС
+                TotalPrice: result.Price || result.price || 0, // Итоговая цена С НДС
                 Name: name,
                 StockCity: stockCity,
                 AvgTubeWeight: parseFloat(avgTubeWeight) || 1,
@@ -432,8 +435,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 Diameter: diameter || '',
                 PipeWallThickness: pipeWallThickness || '',
                 TypeName: typeName || '',
-                InStockT: inStockT || ''
+                InStockT: inStockT || '',
+                NDS: result.NDS || 20 // ЗАДАЕМ ЗНАЧЕНИЕ ПО УМОЛЧАНИЮ 20% если не пришло с сервера
             };
+            
             cart.push(normalizedItem);
             console.log('Товар добавлен в cart:', normalizedItem);
             console.log('Текущее состояние cart:', cart);
@@ -478,13 +483,13 @@ document.addEventListener('DOMContentLoaded', () => {
             item.QuantityTons = 0;
         }
 
-        // Update cart on server
+        // УДАЛЯЕМ локальный расчет цены и отправляем на сервер для пересчета
         const cartItem = {
             NomenclatureID: item.NomenclatureID,
             StockID: item.StockID,
             QuantityTons: item.QuantityTons,
-            QuantityMeters: item.QuantityMeters,
-            Price: item.Price
+            QuantityMeters: item.QuantityMeters
+            // Не передаем Price - сервер сам пересчитает
         };
 
         fetch('https://tg-miniapp-hack.loca.lt/api/cart', {
@@ -500,6 +505,13 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(result => {
             console.log('Корзина обновлена на сервере:', result);
+            
+            // ОБНОВЛЯЕМ: Сохраняем все данные включая НДС
+            item.Price = result.UnitPrice || result.unitPrice || 0; // Цена БЕЗ НДС
+            item.PriceWithNDS = result.PriceWithNDS || result.unitPrice || 0; // Цена С НДС
+            item.TotalPrice = result.Price || result.price || 0; // Итоговая цена С НДС
+            item.NDS = result.NDS || 20; // Устанавливаем НДС (по умолчанию 20%)
+            
             displayCart();
             document.getElementById('error').textContent = '';
         })
@@ -550,8 +562,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const stockCity = item.StockCity || 'Неизвестный склад';
             const quantity = item.UnitType === 'tons' ? item.QuantityTons : item.QuantityMeters;
             const unitLabel = item.UnitType === 'tons' ? 'т' : 'м';
-            const pricePerUnit = item.Price || 0;
-            const itemTotalPrice = (quantity * pricePerUnit).toFixed(2);
+            const pricePerUnit = item.PriceWithNDS || item.Price || 0; // Используем цену С НДС для отображения
+            const itemTotalPrice = item.TotalPrice || (quantity * pricePerUnit);
             totalPrice += parseFloat(itemTotalPrice);
             const truncatedName = name.length > 20 ? name.substring(0, 20) + '...' : name;
 
@@ -576,8 +588,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <button onclick="updateCartItemQuantity(${index}, 1)">+</button>
                                 ${unitLabel}
                             </span></div>
-                            <div class="spec-row"><span class="spec-label">Цена за ${unitLabel}:</span><span class="spec-value">${pricePerUnit.toFixed(2)} ₽</span></div>
-                            <div class="spec-row"><span class="spec-label cart-item-total">Итого:</span><span class="spec-value">${itemTotalPrice} Р</span></div>
+                            <div class="spec-row"><span class="spec-label">Цена за ${unitLabel}:</span><span class="spec-value">${pricePerUnit.toFixed(2)} ₽ (с НДС)</span></div>
+                            <div class="spec-row"><span class="spec-label">НДС:</span><span class="spec-value">${item.NDS || 20}%</span></div>
+                            <div class="spec-row"><span class="spec-label cart-item-total">Итого:</span><span class="spec-value">${itemTotalPrice.toFixed(2)} Р</span></div>
                         </div>
                     </div>
                     <button class="remove-button" onclick="removeFromCart(${index})"><img src="icons/recycle_bin.svg" alt="Remove"></button>
@@ -689,8 +702,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 NomenclatureID: item.NomenclatureID,
                 StockID: item.StockID,
                 QuantityTons: item.QuantityTons,
-                QuantityMeters: item.QuantityMeters,
-                Price: item.Price
+                QuantityMeters: item.QuantityMeters
             }))
         };
 

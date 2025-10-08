@@ -440,24 +440,59 @@ public class Program
                 return Results.NotFound("Price information not found.");
             }
 
+            // НОВАЯ ЛОГИКА ЦЕНООБРАЗОВАНИЯ
             double finalPrice;
             string unit;
+            double quantityTonsForPricing;
+
             if (cartItem.QuantityTons > 0)
             {
-                finalPrice = cartItem.QuantityTons >= price.PriceLimitT2 ? price.PriceT2 :
-                             cartItem.QuantityTons >= price.PriceLimitT1 ? price.PriceT1 : price.PriceT;
-                cartItem.Price = finalPrice * cartItem.QuantityTons * (1 + price.NDS / 100);
+                // Покупка в тоннах: используем QuantityTons напрямую
+                quantityTonsForPricing = cartItem.QuantityTons;
                 unit = "tons";
             }
             else
             {
-                finalPrice = cartItem.QuantityMeters >= price.PriceLimitM2 ? price.PriceM2 :
-                             cartItem.QuantityMeters >= price.PriceLimitM1 ? price.PriceM1 : price.PriceM;
-                cartItem.Price = finalPrice * cartItem.QuantityMeters * (1 + price.NDS / 100);
+                // Покупка в метрах: переводим в тонны через коэффициент
+                var nomenclature = await db.Nomenclatures
+                    .FirstOrDefaultAsync(n => n.ID == cartItem.NomenclatureID);
+                
+                if (nomenclature == null)
+                {
+                    Console.WriteLine($"Ошибка: Номенклатура не найдена для ID={cartItem.NomenclatureID}");
+                    return Results.NotFound("Nomenclature not found.");
+                }
+
+                quantityTonsForPricing = cartItem.QuantityMeters * nomenclature.Koef;
                 unit = "meters";
             }
 
-            Console.WriteLine($"Добавление в корзину: ID={cartItem.NomenclatureID}, StockID={cartItem.StockID}, QuantityTons={cartItem.QuantityTons}, QuantityMeters={cartItem.QuantityMeters}, UnitPrice={finalPrice}, TotalPrice={cartItem.Price}, Unit={unit}");
+            // Применяем пороговые цены на основе quantityTonsForPricing
+            if (quantityTonsForPricing >= price.PriceLimitT2)
+            {
+                finalPrice = price.PriceT2;
+            }
+            else if (quantityTonsForPricing >= price.PriceLimitT1)
+            {
+                finalPrice = price.PriceT1;
+            }
+            else
+            {
+                finalPrice = price.PriceT;
+            }
+
+            // Расчет итоговой стоимости с НДС
+            if (cartItem.QuantityTons > 0)
+            {
+                cartItem.Price = finalPrice * cartItem.QuantityTons * (1 + price.NDS / 100);
+            }
+            else
+            {
+                cartItem.Price = finalPrice * quantityTonsForPricing * (1 + price.NDS / 100);
+            }
+
+            Console.WriteLine($"Добавление в корзину: ID={cartItem.NomenclatureID}, StockID={cartItem.StockID}, QuantityTons={cartItem.QuantityTons}, QuantityMeters={cartItem.QuantityMeters}, QuantityTonsForPricing={quantityTonsForPricing}, UnitPrice={finalPrice}, TotalPrice={cartItem.Price}, Unit={unit}, NDS={price.NDS}%");
+            
             db.CartItems.Add(cartItem);
             await db.SaveChangesAsync();
             Console.WriteLine($"Товар успешно добавлен в корзину: ID={cartItem.Id}");
@@ -472,7 +507,9 @@ public class Program
                 cartItem.Price,
                 UnitPrice = finalPrice,
                 Unit = unit,
-                NDS = price.NDS
+                NDS = price.NDS, // Убедитесь что это поле есть
+                QuantityTonsForPricing = quantityTonsForPricing,
+                PriceWithNDS = finalPrice * (1 + price.NDS / 100) // Добавляем цену с НДС для клиента
             });
         });
 
@@ -525,24 +562,58 @@ public class Program
                     return Results.NotFound($"Price information for {item.NomenclatureID} not found.");
                 }
 
+                // НОВАЯ ЛОГИКА ЦЕНООБРАЗОВАНИЯ (такая же как в корзине)
                 double finalPrice;
                 string unit;
+                double quantityTonsForPricing;
+
                 if (item.QuantityTons > 0)
                 {
-                    finalPrice = item.QuantityTons >= price.PriceLimitT2 ? price.PriceT2 :
-                                 item.QuantityTons >= price.PriceLimitT1 ? price.PriceT1 : price.PriceT;
-                    item.Price = finalPrice * item.QuantityTons * (1 + price.NDS / 100);
+                    // Покупка в тоннах: используем QuantityTons напрямую
+                    quantityTonsForPricing = item.QuantityTons;
                     unit = "tons";
                 }
                 else
                 {
-                    finalPrice = item.QuantityMeters >= price.PriceLimitM2 ? price.PriceM2 :
-                                 item.QuantityMeters >= price.PriceLimitM1 ? price.PriceM1 : price.PriceM;
-                    item.Price = finalPrice * item.QuantityMeters * (1 + price.NDS / 100);
+                    // Покупка в метрах: переводим в тонны через коэффициент
+                    var nomenclature = await db.Nomenclatures
+                        .FirstOrDefaultAsync(n => n.ID == item.NomenclatureID);
+                    
+                    if (nomenclature == null)
+                    {
+                        return Results.NotFound($"Nomenclature {item.NomenclatureID} not found.");
+                    }
+
+                    quantityTonsForPricing = item.QuantityMeters * nomenclature.Koef;
                     unit = "meters";
                 }
 
-                totalPrice += item.Price;
+                // Применяем пороговые цены на основе quantityTonsForPricing
+                if (quantityTonsForPricing >= price.PriceLimitT2)
+                {
+                    finalPrice = price.PriceT2;
+                }
+                else if (quantityTonsForPricing >= price.PriceLimitT1)
+                {
+                    finalPrice = price.PriceT1;
+                }
+                else
+                {
+                    finalPrice = price.PriceT;
+                }
+
+                // Расчет итоговой стоимости с НДС
+                double itemTotalPrice;
+                if (item.QuantityTons > 0)
+                {
+                    itemTotalPrice = finalPrice * item.QuantityTons * (1 + price.NDS / 100);
+                }
+                else
+                {
+                    itemTotalPrice = finalPrice * quantityTonsForPricing * (1 + price.NDS / 100);
+                }
+
+                totalPrice += itemTotalPrice;
 
                 orderItems.Add(new OrderItem
                 {
@@ -551,7 +622,7 @@ public class Program
                     QuantityTons = item.QuantityTons,
                     QuantityMeters = item.QuantityMeters,
                     Price = finalPrice,
-                    Subtotal = item.Price,
+                    Subtotal = itemTotalPrice,
                     CreatedAt = DateTime.UtcNow
                 });
             }

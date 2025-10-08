@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TG-MiniApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+63439ced8e365ab9fe30dc76dff95996cb098a16")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0c5483eaf26a117fc1b904576765e4d1331b9b97")]
 [assembly: System.Reflection.AssemblyProductAttribute("TG-MiniApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TG-MiniApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
