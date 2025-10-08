@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "opYCbZpKYG1yleKnlhmlcEzGslW0gA9wTnRf4oq7bmU=",
+  "Hash": "InxgV2cit+0JhcLtvgDVtD7fn3xKp9BzojydJxJhx/8=",
   "Source": "TG-MiniApp",
   "BasePath": "_content/TG-MiniApp",
   "Mode": "Default",
@@ -178,8 +178,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "htepdrufi6",
-      "Integrity": "RTBS+T6WKowwmo38/Rpi5E1KOz71k9wOk4Ng3pf7C24=",
+      "Fingerprint": "8j4ae4so4n",
+      "Integrity": "dFO0F1gF9Nl+EC323iUS+xsnaIM1JMB9SNle4ndpBek=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\index-scripts.js"
@@ -220,8 +220,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "vny3bgcg8w",
-      "Integrity": "O72nsUe4Cl1QBo8w3adohp4e3nhA4vtjR51ydLftEDo=",
+      "Fingerprint": "lm0n2q2vo7",
+      "Integrity": "E9NbnvUofy27piDpMLYfrHXlxBvi8md20j7tDail/8g=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\style.css"
@@ -803,7 +803,7 @@
       ]
     },
     {
-      "Route": "index-scripts.htepdrufi6.js",
+      "Route": "index-scripts.8j4ae4so4n.js",
       "AssetFile": "D:\\URFU\\TG-MiniApp\\wwwroot\\index-scripts.js",
       "Selectors": [],
       "ResponseHeaders": [
@@ -813,7 +813,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "37559"
+          "Value": "40018"
         },
         {
           "Name": "Content-Type",
@@ -821,11 +821,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"RTBS+T6WKowwmo38/Rpi5E1KOz71k9wOk4Ng3pf7C24=\""
+          "Value": "\"dFO0F1gF9Nl+EC323iUS+xsnaIM1JMB9SNle4ndpBek=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 08 Oct 2025 11:20:13 GMT"
+          "Value": "Wed, 08 Oct 2025 11:58:02 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -835,7 +835,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "htepdrufi6"
+          "Value": "8j4ae4so4n"
         },
         {
           "Name": "label",
@@ -843,7 +843,7 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-RTBS+T6WKowwmo38/Rpi5E1KOz71k9wOk4Ng3pf7C24="
+          "Value": "sha256-dFO0F1gF9Nl+EC323iUS+xsnaIM1JMB9SNle4ndpBek="
         }
       ]
     },
@@ -858,7 +858,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "37559"
+          "Value": "40018"
         },
         {
           "Name": "Content-Type",
@@ -866,11 +866,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"RTBS+T6WKowwmo38/Rpi5E1KOz71k9wOk4Ng3pf7C24=\""
+          "Value": "\"dFO0F1gF9Nl+EC323iUS+xsnaIM1JMB9SNle4ndpBek=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 08 Oct 2025 11:20:13 GMT"
+          "Value": "Wed, 08 Oct 2025 11:58:02 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -880,7 +880,7 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-RTBS+T6WKowwmo38/Rpi5E1KOz71k9wOk4Ng3pf7C24="
+          "Value": "sha256-dFO0F1gF9Nl+EC323iUS+xsnaIM1JMB9SNle4ndpBek="
         }
       ]
     },
@@ -977,7 +977,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "13396"
+          "Value": "13675"
         },
         {
           "Name": "Content-Type",
@@ -985,11 +985,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"O72nsUe4Cl1QBo8w3adohp4e3nhA4vtjR51ydLftEDo=\""
+          "Value": "\"E9NbnvUofy27piDpMLYfrHXlxBvi8md20j7tDail/8g=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 08 Oct 2025 10:47:10 GMT"
+          "Value": "Wed, 08 Oct 2025 12:00:05 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -999,12 +999,12 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-O72nsUe4Cl1QBo8w3adohp4e3nhA4vtjR51ydLftEDo="
+          "Value": "sha256-E9NbnvUofy27piDpMLYfrHXlxBvi8md20j7tDail/8g="
         }
       ]
     },
     {
-      "Route": "style.vny3bgcg8w.css",
+      "Route": "style.lm0n2q2vo7.css",
       "AssetFile": "D:\\URFU\\TG-MiniApp\\wwwroot\\style.css",
       "Selectors": [],
       "ResponseHeaders": [
@@ -1014,7 +1014,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "13396"
+          "Value": "13675"
         },
         {
           "Name": "Content-Type",
@@ -1022,11 +1022,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"O72nsUe4Cl1QBo8w3adohp4e3nhA4vtjR51ydLftEDo=\""
+          "Value": "\"E9NbnvUofy27piDpMLYfrHXlxBvi8md20j7tDail/8g=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 08 Oct 2025 10:47:10 GMT"
+          "Value": "Wed, 08 Oct 2025 12:00:05 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1036,7 +1036,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "vny3bgcg8w"
+          "Value": "lm0n2q2vo7"
         },
         {
           "Name": "label",
@@ -1044,7 +1044,7 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-O72nsUe4Cl1QBo8w3adohp4e3nhA4vtjR51ydLftEDo="
+          "Value": "sha256-E9NbnvUofy27piDpMLYfrHXlxBvi8md20j7tDail/8g="
         }
       ]
     }
