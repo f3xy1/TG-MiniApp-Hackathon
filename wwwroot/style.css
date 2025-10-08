@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: Arial, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     padding: 15px;
     background-color: #f0f2f5;
@@ -145,6 +145,7 @@ th {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    overflow-x: hidden; /* Запрещаем горизонтальную прокрутку */
 }
 
 .product-item {
@@ -156,6 +157,9 @@ th {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: transform 0.2s;
+    width: 100%; /* Полная ширина для карточки */
+    max-width: 100%; /* Убираем ограничение ширины */
+    box-sizing: border-box; /* Учитываем padding в ширине */
 }
 
 .product-item:hover {
@@ -171,12 +175,17 @@ th {
 
 .product-details {
     flex-grow: 1;
+    max-width: calc(100% - 115px); /* Учитываем ширину изображения и отступ */
 }
 
 .product-name {
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Добавляем многоточие для длинных строк */
+    white-space: nowrap; /* Запрещаем перенос на следующую строку */
+    max-width: 100%; /* Ограничиваем ширину названием контейнера */
 }
 
 .product-specs {
@@ -220,9 +229,17 @@ th {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.cart-modal .modal-content {
+.product-modal .modal-content {
+    max-height: 90vh; /* Ограничиваем высоту до 90% высоты экрана */
+    overflow-y: auto; /* Включаем вертикальную прокрутку */
+    padding-bottom: 80px; /* Отступ снизу для кнопки */
+    position: relative; /* Для позиционирования кнопки */
+}
+
+.cart-modal .modal-content,
+.order-modal .modal-content {
     max-height: 80vh;
-    overflow-y: hidden;
+    overflow-y: auto;
 }
 
 .cart-item-count {
@@ -459,6 +476,7 @@ th {
 
 .modal-order {
     margin-top: 20px;
+    margin-bottom: 20px; /* Дополнительный отступ для контента */
 }
 
 .modal-order h3 {
@@ -511,12 +529,13 @@ th {
 
 #addToCartButton {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     background-color: #979899;
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    margin-top: 15px;
 }
 
 #addToCartButton:hover {
@@ -566,6 +585,19 @@ th {
     .order-modal .modal-content {
         width: 95%;
         max-height: 90vh;
+    }
+
+    .product-modal .modal-content {
+        width: 95%;
+        max-height: 85vh;
+        padding-bottom: 100px; /* Дополнительный отступ для кнопки */
+    }
+
+    #addToCartButton {
+        position: sticky;
+        bottom: 10px;
+        margin-top: 10px;
+        z-index: 10;
     }
 
     .cart-modal .cart-content {
@@ -624,5 +656,25 @@ th {
         transform: none;
         border-top-color: transparent;
         border-bottom-color: #333;
+    }
+
+    .product-name {
+        font-size: 1rem; /* Уменьшаем шрифт */
+        white-space: normal; /* Разрешаем перенос текста */
+        text-overflow: unset; /* Убираем многоточие, так как текст переносится */
+        line-height: 1.3; /* Улучшаем читаемость */
+    }
+
+    .product-item {
+        padding: 10px; /* Уменьшаем отступы для компактности */
+    }
+
+    .product-image img {
+        width: 80px; /* Уменьшаем размер изображения */
+        height: 80px;
+    }
+
+    .product-details {
+        max-width: calc(100% - 95px); /* Учитываем ширину изображения и отступ */
     }
 }
