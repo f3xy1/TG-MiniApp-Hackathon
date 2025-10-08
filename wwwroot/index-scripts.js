@@ -52,7 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="order-input">
                     <label>Количество в тоннах</label>
-                    <input type="number" id="quantity" min="0" step="1" placeholder="Введите количество">
+                    <div class="quantity-controls">
+                        <button class="quantity-btn minus-btn">-</button>
+                        <input type="number" id="quantity" min="0" step="1" placeholder="Введите количество">
+                        <button class="quantity-btn plus-btn">+</button>
+                    </div>
                 </div>
                 <button id="addToCartButton">Добавить в корзину</button>
             </div>
@@ -311,30 +315,69 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="spec-row"><span class="spec-label">В наличии:</span><span class="spec-value">${inStockT || ''} т</span></div>
             `;
         }
+        
         const quantityInput = modal.querySelector('#quantity');
-        if (quantityInput) {
-            quantityInput.setAttribute('step', modal.querySelector('#unit-tons').checked ? (avgTubeWeight || 1) : (avgTubeLength || 1));
+        const plusBtn = modal.querySelector('.plus-btn');
+        const minusBtn = modal.querySelector('.minus-btn');
+        
+        // Функция для обновления шага в зависимости от выбранной единицы измерения
+        const updateStep = () => {
+            const unitType = modal.querySelector('input[name="unitType"]:checked').value;
+            const step = unitType === 'tons' ? (avgTubeWeight || 1) : (avgTubeLength || 1);
+            if (quantityInput) {
+                quantityInput.setAttribute('step', step);
+                // Обновляем текущее значение чтобы оно было кратно шагу
+                const currentValue = parseFloat(quantityInput.value) || 0;
+                if (currentValue > 0) {
+                    const roundedValue = Math.round(currentValue / step) * step;
+                    quantityInput.value = roundedValue.toFixed(3);
+                }
+            }
+        };
+        
+        // Функция для изменения количества
+        const changeQuantity = (change) => {
+            const unitType = modal.querySelector('input[name="unitType"]:checked').value;
+            const step = unitType === 'tons' ? (avgTubeWeight || 1) : (avgTubeLength || 1);
+            let currentValue = parseFloat(quantityInput.value) || 0;
+            currentValue = Math.max(0, currentValue + change * step);
+            currentValue = Math.round(currentValue / step) * step; // Обеспечиваем кратность шагу
+            quantityInput.value = currentValue.toFixed(3);
+        };
+        
+        // Обработчики для кнопок +/-
+        if (plusBtn) {
+            plusBtn.onclick = () => changeQuantity(1);
         }
-        const addToCartButton = modal.querySelector('#addToCartButton');
-        if (addToCartButton) {
-            addToCartButton.onclick = () => addToCart(id, stockID, name, stockCity, priceT, avgTubeWeight, avgTubeLength, gost, steelGrade, diameter, pipeWallThickness, typeName, inStockT);
+        if (minusBtn) {
+            minusBtn.onclick = () => changeQuantity(-1);
         }
+        
+        // Обработчик изменения единицы измерения
         modal.querySelectorAll('input[name="unitType"]').forEach(radio => {
             radio.onchange = () => {
-                if (quantityInput) {
-                    quantityInput.setAttribute('step', radio.value === 'tons' ? (avgTubeWeight || 1) : (avgTubeLength || 1));
-                    quantityInput.value = '';
-                    const orderInputLabel = modal.querySelector('.order-input label');
-                    if (orderInputLabel) {
-                        orderInputLabel.textContent = `Количество в ${radio.value === 'tons' ? 'тоннах' : 'метрах'}`;
-                    }
+                updateStep();
+                quantityInput.value = '';
+                const orderInputLabel = modal.querySelector('.order-input label');
+                if (orderInputLabel) {
+                    orderInputLabel.textContent = `Количество в ${radio.value === 'tons' ? 'тоннах' : 'метрах'}`;
                 }
             };
         });
+        
+        // Инициализация
+        updateStep();
         const orderInputLabel = modal.querySelector('.order-input label');
         if (orderInputLabel) {
             orderInputLabel.textContent = 'Количество в тоннах';
         }
+        
+        // Обработчик для добавления в корзину
+        const addToCartButton = modal.querySelector('#addToCartButton');
+        if (addToCartButton) {
+            addToCartButton.onclick = () => addToCart(id, stockID, name, stockCity, priceT, avgTubeWeight, avgTubeLength, gost, steelGrade, diameter, pipeWallThickness, typeName, inStockT);
+        }
+        
         modal.style.display = 'block';
 
         const backButton = modal.querySelector('.back-button');
