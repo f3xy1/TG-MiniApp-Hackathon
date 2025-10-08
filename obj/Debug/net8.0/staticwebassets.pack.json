@@ -21,6 +21,10 @@
       "PackagePath": "staticwebassets\\icons\\placeholder_small.svg"
     },
     {
+      "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\icons\\recycle_bin.svg",
+      "PackagePath": "staticwebassets\\icons\\recycle_bin.svg"
+    },
+    {
       "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\icons\\search.svg",
       "PackagePath": "staticwebassets\\icons\\search.svg"
     },
@@ -31,10 +35,6 @@
     {
       "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\index.html",
       "PackagePath": "staticwebassets\\index.html"
-    },
-    {
-      "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\script.js",
-      "PackagePath": "staticwebassets\\script.js"
     },
     {
       "Id": "D:\\URFU\\TG-MiniApp\\wwwroot\\style.css",

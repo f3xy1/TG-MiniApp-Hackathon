@@ -107,6 +107,19 @@ public class CartItem
     public double Price { get; set; }
 }
 
+public class OrderItem
+{
+    public int Id { get; set; }
+    public int OrderId { get; set; }
+    public string? NomenclatureID { get; set; }
+    public string? StockID { get; set; }
+    public double QuantityTons { get; set; }
+    public double QuantityMeters { get; set; }
+    public double Price { get; set; }
+    public double Subtotal { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+
 public class Order
 {
     public int Id { get; set; }
@@ -118,6 +131,7 @@ public class Order
     public List<CartItem>? Items { get; set; }
     public double TotalPrice { get; set; }
     public DateTime OrderDate { get; set; }
+    public List<OrderItem>? OrderItems { get; set; }
 }
 
 public class AppDbContext : DbContext
@@ -129,6 +143,7 @@ public class AppDbContext : DbContext
     public DbSet<Stock> Stocks { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -141,6 +156,12 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Remnant>().HasKey(r => new { r.ID, r.IDStock });
         modelBuilder.Entity<CartItem>().HasKey(c => c.Id);
         modelBuilder.Entity<Order>().HasKey(o => o.Id);
+        modelBuilder.Entity<OrderItem>().HasKey(oi => oi.Id);
+        modelBuilder.Entity<OrderItem>()
+            .HasOne<Order>()
+            .WithMany(o => o.OrderItems)
+            .HasForeignKey(oi => oi.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
 
@@ -175,16 +196,15 @@ public class Program
             await next.Invoke();
         });
 
-        app.UseStaticFiles(); // Для отдачи index.html из wwwroot
-        app.MapGet("/", () => Results.Redirect("/index.html")); // Перенаправление с / на /index.html
-        app.UseDefaultFiles(); // Для обработки запросов к корню
+        app.UseStaticFiles();
+        app.MapGet("/", () => Results.Redirect("/index.html"));
+        app.UseDefaultFiles();
         app.UseStaticFiles(new StaticFileOptions
         {
-            ServeUnknownFileTypes = true, // Для неизвестных типов файлов
-            DefaultContentType = "text/html" // По умолчанию отдаём HTML
+            ServeUnknownFileTypes = true,
+            DefaultContentType = "text/html"
         });
         app.UseCors("AllowAll");
-        // app.UseHttpsRedirection(); // Закомментировано для упрощения тестирования через Pinggy
 
         using (var scope = app.Services.CreateScope())
         {
@@ -193,16 +213,35 @@ public class Program
             Console.WriteLine($"Путь к базе данных: {dbPath}");
             Console.WriteLine($"Файл app.db существует: {File.Exists(dbPath)}");
 
+            // Подсказка для ручного удаления
+            if (File.Exists(dbPath))
+            {
+                Console.WriteLine("ВНИМАНИЕ: Файл app.db существует. Для пересоздания БД с таблицей OrderItems удалите app.db вручную перед запуском приложения.");
+                Console.WriteLine("Инструкция: Остановите приложение (Ctrl+C), удалите файл app.db, затем запустите dotnet run снова.");
+            }
+            else
+            {
+                Console.WriteLine("Файл app.db не существует, будет создана новая база данных");
+            }
+
             Console.WriteLine("Начало инициализации базы данных");
 
-            // Создание пустой базы данных
+            // Восстановлена исходная логика создания БД
             db.Database.EnsureCreated();
-
-            // Применение миграций
-            db.Database.Migrate();
 
             try
             {
+                // Проверка наличия таблицы OrderItems
+                var tableExists = db.Database.ExecuteSqlRaw("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='OrderItems'") > 0;
+                if (tableExists)
+                {
+                    Console.WriteLine("Таблица OrderItems успешно создана");
+                }
+                else
+                {
+                    Console.WriteLine("ОШИБКА: Таблица OrderItems не была создана");
+                }
+
                 if (!db.Types.Any())
                 {
                     var typesJson = File.ReadAllText("jsons/types.json");
@@ -233,8 +272,8 @@ public class Program
 
                 if (!db.Remnants.Any())
                 {
-                    var remnantsJson = File.ReadAllText("jsons/remnants.json");
-                    var remnantsWrapper = JsonSerializer.Deserialize<RemnantsWrapper>(remnantsJson);
+                    var stocksJson = File.ReadAllText("jsons/remnants.json");
+                    var remnantsWrapper = JsonSerializer.Deserialize<RemnantsWrapper>(stocksJson);
                     Console.WriteLine($"Найдено {remnantsWrapper?.ArrayOfRemnantsEl?.Count ?? 0} записей в remnants.json");
                     db.Remnants.AddRange(remnantsWrapper?.ArrayOfRemnantsEl ?? new List<Remnant>());
                     int remnantsSaved = db.SaveChanges();
@@ -279,7 +318,7 @@ public class Program
                 Console.WriteLine($"Nomenclatures: {db.Nomenclatures.Count()}");
                 Console.WriteLine($"Prices: {db.Prices.Count()}");
                 Console.WriteLine($"Remnants: {db.Remnants.Count()}");
-
+                Console.WriteLine($"OrderItems: {db.OrderItems.Count()}");
                 Console.WriteLine("Инициализация базы данных завершена");
             }
             catch (Exception ex)
@@ -314,7 +353,18 @@ public class Program
                             StockCity = s.StockCity,
                             StockID = s.IDStock,
                             PriceT = p.PriceT,
+                            PriceT1 = p.PriceT1,
+                            PriceT2 = p.PriceT2,
+                            PriceLimitT1 = p.PriceLimitT1,
+                            PriceLimitT2 = p.PriceLimitT2,
+                            PriceM = p.PriceM,
+                            PriceM1 = p.PriceM1,
+                            PriceM2 = p.PriceM2,
+                            PriceLimitM1 = p.PriceLimitM1,
+                            PriceLimitM2 = p.PriceLimitM2,
+                            NDS = p.NDS,
                             InStockT = r.InStockT,
+                            InStockM = r.InStockM,
                             AvgTubeLength = r.AvgTubeLength,
                             AvgTubeWeight = r.AvgTubeWeight
                         };
@@ -391,24 +441,39 @@ public class Program
             }
 
             double finalPrice;
+            string unit;
             if (cartItem.QuantityTons > 0)
             {
                 finalPrice = cartItem.QuantityTons >= price.PriceLimitT2 ? price.PriceT2 :
                              cartItem.QuantityTons >= price.PriceLimitT1 ? price.PriceT1 : price.PriceT;
-                cartItem.Price = finalPrice * cartItem.QuantityTons;
+                cartItem.Price = finalPrice * cartItem.QuantityTons * (1 + price.NDS / 100);
+                unit = "tons";
             }
             else
             {
                 finalPrice = cartItem.QuantityMeters >= price.PriceLimitM2 ? price.PriceM2 :
                              cartItem.QuantityMeters >= price.PriceLimitM1 ? price.PriceM1 : price.PriceM;
-                cartItem.Price = finalPrice * cartItem.QuantityMeters;
+                cartItem.Price = finalPrice * cartItem.QuantityMeters * (1 + price.NDS / 100);
+                unit = "meters";
             }
 
-            Console.WriteLine($"Добавление в корзину: ID={cartItem.NomenclatureID}, StockID={cartItem.StockID}, QuantityTons={cartItem.QuantityTons}, QuantityMeters={cartItem.QuantityMeters}, Price={cartItem.Price}");
+            Console.WriteLine($"Добавление в корзину: ID={cartItem.NomenclatureID}, StockID={cartItem.StockID}, QuantityTons={cartItem.QuantityTons}, QuantityMeters={cartItem.QuantityMeters}, UnitPrice={finalPrice}, TotalPrice={cartItem.Price}, Unit={unit}");
             db.CartItems.Add(cartItem);
             await db.SaveChangesAsync();
             Console.WriteLine($"Товар успешно добавлен в корзину: ID={cartItem.Id}");
-            return Results.Created($"/api/cart/{cartItem.Id}", cartItem);
+
+            return Results.Created($"/api/cart/{cartItem.Id}", new
+            {
+                cartItem.Id,
+                cartItem.NomenclatureID,
+                cartItem.StockID,
+                cartItem.QuantityTons,
+                cartItem.QuantityMeters,
+                cartItem.Price,
+                UnitPrice = finalPrice,
+                Unit = unit,
+                NDS = price.NDS
+            });
         });
 
         app.MapPost("/api/orders", async (AppDbContext db, [FromBody] Order order) =>
@@ -425,6 +490,7 @@ public class Program
             }
 
             double totalPrice = 0;
+            var orderItems = new List<OrderItem>();
             foreach (var item in order.Items)
             {
                 var remnant = await db.Remnants
@@ -460,28 +526,76 @@ public class Program
                 }
 
                 double finalPrice;
+                string unit;
                 if (item.QuantityTons > 0)
                 {
                     finalPrice = item.QuantityTons >= price.PriceLimitT2 ? price.PriceT2 :
                                  item.QuantityTons >= price.PriceLimitT1 ? price.PriceT1 : price.PriceT;
-                    item.Price = finalPrice * item.QuantityTons;
+                    item.Price = finalPrice * item.QuantityTons * (1 + price.NDS / 100);
+                    unit = "tons";
                 }
                 else
                 {
                     finalPrice = item.QuantityMeters >= price.PriceLimitM2 ? price.PriceM2 :
                                  item.QuantityMeters >= price.PriceLimitM1 ? price.PriceM1 : price.PriceM;
-                    item.Price = finalPrice * item.QuantityMeters;
+                    item.Price = finalPrice * item.QuantityMeters * (1 + price.NDS / 100);
+                    unit = "meters";
                 }
 
                 totalPrice += item.Price;
+
+                orderItems.Add(new OrderItem
+                {
+                    NomenclatureID = item.NomenclatureID,
+                    StockID = item.StockID,
+                    QuantityTons = item.QuantityTons,
+                    QuantityMeters = item.QuantityMeters,
+                    Price = finalPrice,
+                    Subtotal = item.Price,
+                    CreatedAt = DateTime.UtcNow
+                });
             }
 
             order.TotalPrice = totalPrice;
             order.OrderDate = DateTime.UtcNow;
+            order.OrderItems = orderItems;
 
             db.Orders.Add(order);
             await db.SaveChangesAsync();
-            return Results.Created($"/api/orders/{order.Id}", order);
+
+            foreach (var orderItem in orderItems)
+            {
+                orderItem.OrderId = order.Id;
+            }
+            await db.SaveChangesAsync();
+
+            db.CartItems.RemoveRange(db.CartItems);
+            await db.SaveChangesAsync();
+
+            return Results.Created($"/api/orders/{order.Id}", new
+            {
+                order.Id,
+                order.FirstName,
+                order.LastName,
+                order.INN,
+                order.Phone,
+                order.Email,
+                order.TotalPrice,
+                order.OrderDate,
+                OrderItems = orderItems.Select(oi => new
+                {
+                    oi.Id,
+                    oi.OrderId,
+                    oi.NomenclatureID,
+                    oi.StockID,
+                    oi.QuantityTons,
+                    oi.QuantityMeters,
+                    oi.Price,
+                    oi.Subtotal,
+                    oi.CreatedAt,
+                    Unit = oi.QuantityTons > 0 ? "tons" : "meters"
+                })
+            });
         });
 
         app.UseRouting();

@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="modal-header">
                 <button class="back-button"><img src="icons/back.svg" alt="Back"></button>
                 <h2>Детали товара</h2>
-                <img src="icons/bin.svg" alt="Cart" class="cart-icon">
             </div>
             <div class="modal-image"><img src="icons/placeholder_big.svg" alt="Product Image"></div>
             <div class="modal-name"></div>
@@ -79,6 +78,43 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.body.appendChild(cartModal);
     cartModal.style.display = 'none';
+
+    // Создание модального окна для оформления заказа
+    const orderModal = document.createElement('div');
+    orderModal.className = 'modal order-modal';
+    orderModal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="back-button"><img src="icons/back.svg" alt="Back"></button>
+                <h2>Оформление заказа</h2>
+            </div>
+            <div class="order-form">
+                <div class="order-input">
+                    <label>Имя:</label>
+                    <input type="text" id="firstName" placeholder="Введите имя">
+                </div>
+                <div class="order-input">
+                    <label>Фамилия:</label>
+                    <input type="text" id="lastName" placeholder="Введите фамилию">
+                </div>
+                <div class="order-input">
+                    <label>ИНН:</label>
+                    <input type="text" id="inn" placeholder="Введите ИНН">
+                </div>
+                <div class="order-input">
+                    <label>Телефон:</label>
+                    <input type="text" id="phone" placeholder="Введите телефон">
+                </div>
+                <div class="order-input">
+                    <label>Email:</label>
+                    <input type="email" id="email" placeholder="Введите email">
+                </div>
+                <button id="submitOrderButton">Подтвердить заказ</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(orderModal);
+    orderModal.style.display = 'none';
 
     // Скрываем корзину и фильтры по умолчанию
     if (cartSection) cartSection.style.display = 'none';
@@ -191,6 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let products = await response.json();
 
             if (searchTerm) {
+                const searchTermLower = searchTerm.toLowerCase();
                 products = products.filter(product => {
                     const searchableFields = [
                         product.name || '',
@@ -201,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         product.typeName || '',
                         product.stockCity || ''
                     ].join(' ').toLowerCase();
-                    return searchableFields.includes(searchTerm);
+                    return searchableFields.includes(searchTermLower); // Используем searchTermLower
                 });
             }
 
@@ -581,18 +618,49 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.showOrderForm = function() {
-        const orderForm = document.getElementById('orderForm');
-        if (orderForm) {
-            orderForm.style.display = 'block';
-        } else {
-            console.error('Ошибка: элемент #orderForm не найден в DOM');
+        const orderModal = document.querySelector('.order-modal');
+        if (!orderModal) {
+            console.error('Ошибка: элемент .order-modal не найден в DOM');
+            return;
+        }
+        orderModal.style.display = 'block';
+
+        const backButton = orderModal.querySelector('.back-button');
+        if (backButton) {
+            backButton.onclick = () => {
+                orderModal.style.display = 'none';
+                const cartModal = document.querySelector('.cart-modal');
+                if (cartModal) {
+                    cartModal.style.display = 'block';
+                    displayCart();
+                }
+            };
+        }
+
+        const submitOrderButton = orderModal.querySelector('#submitOrderButton');
+        if (submitOrderButton) {
+            submitOrderButton.onclick = submitOrder;
+        }
+
+        // Заполнение полей формы данными из Telegram
+        const tg = window.Telegram.WebApp;
+        const firstName = document.getElementById('firstName');
+        const lastName = document.getElementById('lastName');
+        if (tg.initDataUnsafe.user && firstName && lastName) {
+            firstName.value = tg.initDataUnsafe.user.first_name || '';
+            lastName.value = tg.initDataUnsafe.user.last_name || '';
         }
     };
 
-    window.submitOrder = function() {
+    window.submitOrder = async function() {
         if (!Array.isArray(cart)) {
             console.error('Ошибка: cart не является массивом при отправке заказа');
             cart = [];
+        }
+        const orderModal = document.querySelector('.order-modal');
+        if (!orderModal) {
+            console.error('Ошибка: элемент .order-modal не найден в DOM');
+            return;
         }
         const firstName = document.getElementById('firstName');
         const lastName = document.getElementById('lastName');
@@ -603,6 +671,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!firstName || !lastName || !inn || !phone || !email) {
             console.error('Ошибка: одно или несколько полей формы заказа не найдены');
             document.getElementById('error').textContent = 'Ошибка: поля формы заказа не найдены';
+            return;
+        }
+
+        if (!firstName.value || !lastName.value || !inn.value || !phone.value || !email.value) {
+            document.getElementById('error').textContent = 'Пожалуйста, заполните все поля формы';
             return;
         }
 
@@ -621,16 +694,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }))
         };
 
-        fetch('https://tg-miniapp-hack.loca.lt/api/orders', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(order)
-        })
-        .then(response => {
+        try {
+            // Отправка заказа на сервер
+            console.log('Отправляемый заказ:', JSON.stringify(order, null, 2));
+            const response = await fetch('https://tg-miniapp-hack.loca.lt/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(order)
+            });
             if (!response.ok) throw new Error('Ошибка оформления заказа');
-            return response.json();
-        })
-        .then(result => {
+            const result = await response.json();
+
+            // Очистка корзины и завершение
             document.getElementById('error').textContent = '';
             alert('Заказ успешно оформлен!');
             cart = [];
@@ -638,30 +713,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (orderButton) {
                 orderButton.style.display = 'none';
             }
-            const orderForm = document.getElementById('orderForm');
-            if (orderForm) {
-                orderForm.style.display = 'none';
-            }
+            orderModal.style.display = 'none';
             tg.close();
-        })
-        .catch(error => {
+        } catch (error) {
             console.error('Ошибка оформления заказа:', error);
             document.getElementById('error').textContent = error.message;
-        });
+        }
     };
 
     // Инициализация Telegram Web App
     const tg = window.Telegram.WebApp;
     tg.ready();
     tg.expand();
-
-    // Заполнение полей формы заказа данными из Telegram
-    const firstName = document.getElementById('firstName');
-    const lastName = document.getElementById('lastName');
-    if (tg.initDataUnsafe.user && firstName && lastName) {
-        firstName.value = tg.initDataUnsafe.user.first_name || '';
-        lastName.value = tg.initDataUnsafe.user.last_name || '';
-    }
 
     // Начальная загрузка продуктов
     fetchProducts();
